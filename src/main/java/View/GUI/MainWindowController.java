@@ -4,6 +4,7 @@ import Exceptions.DictionaryException;
 import Model.ProgramState.ProgramState;
 import Model.Statements.Statement;
 import Model.Values.Value;
+import View.GUI.TableEntries.LockTableEntry;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -53,6 +54,12 @@ public class MainWindowController implements Initializable {
     @FXML
     private TableColumn<HeapTableEntry, String> valueHeapTableColumn;
     @FXML
+    private TableView<LockTableEntry> lockTable;
+    @FXML
+    private TableColumn<LockTableEntry, String> addressLockTableColumn;
+    @FXML
+    private TableColumn<LockTableEntry, String> valueLockTableColumn;
+    @FXML
     private TextField threadCountText;
 
     public void loadProgram(Controller controller) {
@@ -82,6 +89,8 @@ public class MainWindowController implements Initializable {
         this.symbolTableValueColumn.setCellValueFactory(cellData -> cellData.getValue().valueProperty());
         this.addressHeapTableColumn.setCellValueFactory(cellData -> cellData.getValue().addressProperty());
         this.valueHeapTableColumn.setCellValueFactory(cellData -> cellData.getValue().valueProperty());
+        this.addressLockTableColumn.setCellValueFactory(cellData -> cellData.getValue().addressProperty());
+        this.valueLockTableColumn.setCellValueFactory(cellData -> cellData.getValue().threadIdProperty());
     }
 
     public void updateWindow() throws DictionaryException {
@@ -91,6 +100,7 @@ public class MainWindowController implements Initializable {
         this.populateOutputList();
         this.populateFileTable();
         this.populateHeapTable();
+        this.populateLockTable();
         this.populateThreadCountText();
     }
 
@@ -171,6 +181,17 @@ public class MainWindowController implements Initializable {
                 }
                 break;
             }
+        }
+    }
+
+    private void populateLockTable() {
+        this.lockTable.getItems().clear();
+        for (ProgramState programState : this.program.getRepository().getProgramStateList()) {
+            for (Integer address : programState.getLockTable().keySet()) {
+                LockTableEntry entry = new LockTableEntry(address, programState.getLockTable().get(address));
+                this.lockTable.getItems().add(entry);
+            }
+            break;
         }
     }
 
