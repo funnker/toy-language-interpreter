@@ -15,19 +15,25 @@ public class ProgramState {
     private final MyIHeap heap;
     private final MyIList<Value> output;
     private final MyILockTable lockTable;
+    private final MyISyncTable semaphoreTable;
+    private final MyISyncTable barrierTable;
+    private final MyISyncTable latchTable;
     private final int id;
     private static final SortedSet<Integer> ids = new TreeSet<>();
     private final Statement originalProgram;
 
     public ProgramState(MyIStack<Statement> executionStack, MyIDictionary<String, Value> symbolTable, MyIHeap heap,
                         MyIDictionary<String, BufferedReader> fileTable, MyIList<Value> output, MyILockTable lockTable,
-                        Statement originalProgram) throws MyException {
+                        MyISyncTable semaphoreTable, MyISyncTable barrierTable, MyISyncTable latchTable, Statement originalProgram) throws MyException {
         this.executionStack = executionStack;
         this.symbolTable = symbolTable;
         this.heap = heap;
         this.fileTable = fileTable;
         this.output = output;
         this.lockTable = lockTable;
+        this.semaphoreTable = semaphoreTable;
+        this.barrierTable = barrierTable;
+        this.latchTable = latchTable;
         this.originalProgram = originalProgram.deepCopy();
         this.id = ProgramState.generateNewId();
         executionStack.push(originalProgram);
@@ -46,7 +52,7 @@ public class ProgramState {
         int id;
         synchronized (ProgramState.ids) {
             do {
-                id = random.nextInt();
+                id = random.nextInt(1000);
             } while (ProgramState.ids.contains(id));
             ProgramState.ids.add(id);
         }
@@ -65,7 +71,10 @@ public class ProgramState {
                 "Output:\n" + this.output.toString() + "\n" +
                 "File Table:\n" + this.fileTable.toString() + "\n" +
                 "Heap:\n" + this.heap.toString() + "\n" +
-                "Lock Table:\n" + this.lockTable.toString() + "\n";
+                "Lock Table:\n" + this.lockTable.toString() + "\n" +
+                "Semaphore Table:\n" + this.semaphoreTable.toString() + "\n" +
+                "Barrier Table:\n" + this.barrierTable.toString() + "\n" +
+                "Latch Table:\n" + this.latchTable.toString() + "\n";
     }
 
     public MyIStack<Statement> getExecutionStack() {
@@ -103,4 +112,17 @@ public class ProgramState {
     public void setLockTable(MyILockTable lockTable) {
         this.lockTable.setMap(lockTable.getMap());
     }
+
+    public MyISyncTable getSemaphoreTable() {
+        return this.semaphoreTable;
+    }
+
+    public MyISyncTable getBarrierTable() {
+        return this.barrierTable;
+    }
+
+    public MyISyncTable getLatchTable() {
+        return this.latchTable;
+    }
+
 }

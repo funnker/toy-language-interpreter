@@ -1,10 +1,11 @@
 package View.GUI;
 
+import Datastructures.Pair;
 import Exceptions.DictionaryException;
 import Model.ProgramState.ProgramState;
 import Model.Statements.Statement;
 import Model.Values.Value;
-import View.GUI.TableEntries.LockTableEntry;
+import View.GUI.TableEntries.*;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -20,8 +21,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import View.GUI.TableEntries.HeapTableEntry;
-import View.GUI.TableEntries.SymbolTableEntry;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -60,6 +59,26 @@ public class MainWindowController implements Initializable {
     @FXML
     private TableColumn<LockTableEntry, String> valueLockTableColumn;
     @FXML
+    private TableView<SemaphoreTableEntry> semaphoreTable;
+    @FXML
+    private TableColumn<SemaphoreTableEntry, String> indexSemaphoreTableColumn;
+    @FXML
+    private TableColumn<SemaphoreTableEntry, String> valueSemaphoreTableColumn;
+    @FXML
+    private TableView<BarrierTableEntry> barrierTable;
+    @FXML
+    private TableColumn<BarrierTableEntry, String> barrierTableAddressColumn;
+    @FXML
+    private TableColumn<BarrierTableEntry, String> barrierTableValueColumn;
+    @FXML
+    private TableColumn<BarrierTableEntry, String> barrierTableListOfValuesColumn;
+    @FXML
+    private TableView<LatchTableEntry> latchTable;
+    @FXML
+    private TableColumn<LatchTableEntry, String> latchTableAddressColumn;
+    @FXML
+    private TableColumn<LatchTableEntry, String> latchTableCountColumn;
+    @FXML
     private TextField threadCountText;
 
     public void loadProgram(Controller controller) {
@@ -91,6 +110,13 @@ public class MainWindowController implements Initializable {
         this.valueHeapTableColumn.setCellValueFactory(cellData -> cellData.getValue().valueProperty());
         this.addressLockTableColumn.setCellValueFactory(cellData -> cellData.getValue().addressProperty());
         this.valueLockTableColumn.setCellValueFactory(cellData -> cellData.getValue().threadIdProperty());
+        this.indexSemaphoreTableColumn.setCellValueFactory(cellData -> cellData.getValue().indexProperty());
+        this.valueSemaphoreTableColumn.setCellValueFactory(cellData -> cellData.getValue().valueProperty());
+        this.barrierTableAddressColumn.setCellValueFactory(cellData -> cellData.getValue().addressProperty());
+        this.barrierTableValueColumn.setCellValueFactory(cellData -> cellData.getValue().valueProperty());
+        this.barrierTableListOfValuesColumn.setCellValueFactory(cellData -> cellData.getValue().listOfValuesProperty());
+        this.latchTableAddressColumn.setCellValueFactory(cellData -> cellData.getValue().addressProperty());
+        this.latchTableCountColumn.setCellValueFactory(cellData -> cellData.getValue().countProperty());
     }
 
     public void updateWindow() throws DictionaryException {
@@ -101,6 +127,9 @@ public class MainWindowController implements Initializable {
         this.populateFileTable();
         this.populateHeapTable();
         this.populateLockTable();
+        this.populateSemaphoreTable();
+        this.populateBarrierTable();
+        this.populateLatchTable();
         this.populateThreadCountText();
     }
 
@@ -190,6 +219,41 @@ public class MainWindowController implements Initializable {
             for (Integer address : programState.getLockTable().keySet()) {
                 LockTableEntry entry = new LockTableEntry(address, programState.getLockTable().get(address));
                 this.lockTable.getItems().add(entry);
+            }
+            break;
+        }
+    }
+
+    private void populateSemaphoreTable() {
+        this.semaphoreTable.getItems().clear();
+        for (ProgramState programState : this.program.getRepository().getProgramStateList()) {
+            for (Integer index : programState.getSemaphoreTable().keys()) {
+                Pair<Integer, List<Integer>> pair = (Pair<Integer, List<Integer>>) programState.getSemaphoreTable().get(index);
+                SemaphoreTableEntry entry = new SemaphoreTableEntry(index, pair);
+                this.semaphoreTable.getItems().add(entry);
+            }
+            break;
+        }
+    }
+
+    private void populateBarrierTable() {
+        this.barrierTable.getItems().clear();
+        for (ProgramState programState : this.program.getRepository().getProgramStateList()) {
+            for (Integer key : programState.getBarrierTable().keys()) {
+                Pair<Integer, List<Integer>> pair = (Pair<Integer, List<Integer>>) programState.getBarrierTable().get(key);
+                BarrierTableEntry entry = new BarrierTableEntry(key, pair);
+                this.barrierTable.getItems().add(entry);
+            }
+            break;
+        }
+    }
+
+    private void populateLatchTable() {
+        this.latchTable.getItems().clear();
+        for (ProgramState programState : this.program.getRepository().getProgramStateList()) {
+            for (Integer address : programState.getLatchTable().keys()) {
+                LatchTableEntry entry = new LatchTableEntry(address, (Integer) programState.getLatchTable().get(address));
+                this.latchTable.getItems().add(entry);
             }
             break;
         }

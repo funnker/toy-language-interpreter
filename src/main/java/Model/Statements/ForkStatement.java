@@ -25,7 +25,8 @@ public class ForkStatement implements Statement {
         ProgramState newProgramState;
         try {
             newProgramState = new ProgramState(newExecutionStack, newSymbolTable, state.getHeap(),
-                    state.getFileTable(), state.getOutput(), state.getLockTable(), this.statement);
+                    state.getFileTable(), state.getOutput(), state.getLockTable(), state.getSemaphoreTable(),
+                    state.getBarrierTable(), state.getLatchTable(), statement);
         } catch (MyException e) {
             throw new RuntimeException(e);
         }

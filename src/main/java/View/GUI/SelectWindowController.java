@@ -37,7 +37,8 @@ public class SelectWindowController implements Initializable {
     private void createExamples() {
         ExampleGenerator.getExamples().forEach(example -> {
             try {
-                this.programs.add(new ProgramState(new MyStack<>(), new MyDictionary<>(), new MyHeap(), new MyDictionary<>(), new MyList<>(), new MyLockTable(), example));
+                this.programs.add(new ProgramState(new MyStack<>(), new MyDictionary<>(), new MyHeap(),
+                        new MyDictionary<>(), new MyList<>(), new MyLockTable(), new MySemaphoreTable(), new MyBarrierTable(), new MyLatchTable(), example));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -69,7 +70,7 @@ public class SelectWindowController implements Initializable {
             selectedIndex = 0;
         }
         ProgramState program = this.programs.get(selectedIndex);
-        String logFilePath = "D:\\ubb\\university-work\\2nd year\\APM (Advanced Progamming Methodologies)\\ToyLanguageInterpreter\\src\\main\\java\\logs\\out.txt";
+        String logFilePath = "src/main/java/logs/out.txt";
         IRepository repository = new Repository(program, logFilePath);
         Controller controller = new Controller(repository);
 
