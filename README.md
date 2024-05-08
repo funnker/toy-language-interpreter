@@ -1,6 +1,6 @@
 # Toy Language Interpreter
 
-[![GitHub license](https://img.shields.io/github/license/funnker/toy-language-interpreter)](https://github.com/funnker/toy-language-interpreter/LICENSE)
+[![GitHub license](https://img.shields.io/github/license/funnker/toy-language-interpreter)](https://github.com/funnker/toy-language-interpreter/blob/main/LICENSE)
 ![Java](https://img.shields.io/badge/Language-Java-orange)
 
 A Java-based interpreter for a simple toy language, providing a platform for understanding language interpretation fundamentals and allowing for potential enhancements in the future.
